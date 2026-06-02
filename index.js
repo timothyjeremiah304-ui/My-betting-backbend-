@@ -1,69 +1,70 @@
 const express = require('express');
-const crypto = require('crypto');
+const axios = require('axios'); // Required to pull data from the real sports feed
 const path = require('path');
+const cors = require('cors');
+
 const app = express();
 app.use(express.json());
+app.use(cors());
 
-// Mock Database stored safely in server memory
+// Your verified unique API Key integrated directly here
+const SPORTS_API_KEY = "3190c138dc5f083d4f7a3a698f16e828"; 
+
 let userWallet = { username: "Player1", balanceCents: 50000 };
-let liveGame = { gameId: 1, homeTeam: "Chelsea", awayTeam: "Arsenal", homeOdds: 2.10, drawOdds: 3.40, awayOdds: 2.90 };
-let betSlipArchive = [];
 
-// 1. HOME SCREEN GATEWAY CHECK (Serves your SportyBet Face!)
+// 1. SERVE FRONTEND INTERFACE
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// 2. CHECK WALLET BALANCE
-app.get('/wallet', (req, res) => {
-    const currentBalanceDollars = (userWallet.balanceCents / 100).toFixed(2);
-    res.json({ username: userWallet.username, balance: `$${currentBalanceDollars}` });
+// 2. REAL-TIME LIVE MATCHES STREAMING GATEWAY
+app.get('/api/live-fixtures', async (req, res) => {
+    try {
+        // Pulling real-time in-play football matches from the global sports data server
+        const response = await axios.get('https://v3.football.api-sports.io/fixtures', {
+            params: { live: 'all' },
+            headers: {
+                'x-rapidapi-key': SPORTS_API_KEY,
+                'x-rapidapi-host': 'v3.football.api-sports.io'
+            }
+        });
+
+        const realMatches = response.data.response || [];
+        
+        // Format the real data cleanly so our front-end can display it instantly
+        const processedFixtures = realMatches.map(item => ({
+            id: item.fixture.id,
+            status: item.fixture.status.short,
+            time: item.fixture.status.elapsed,
+            league: item.league.name,
+            team1: item.teams.home.name,
+            team2: item.teams.away.name,
+            score1: item.goals.home ?? 0,
+            score2: item.goals.away ?? 0,
+            odds: [
+                item.goals.home > item.goals.away ? 1.40 : 2.30, 
+                3.40, 
+                item.goals.away > item.goals.home ? 1.50 : 3.80
+            ]
+        }));
+
+        res.json(processedFixtures);
+    } catch (error) {
+        console.error("API Error:", error.message);
+        res.status(500).json({ error: "Failed to stream live global matches." });
+    }
 });
 
-// 3. PLACE A WAGER
+// 3. SECURE BET PLACEMENT ENGINE
 app.post('/place-bet', (req, res) => {
     const { prediction, stakeCents } = req.body;
-
-    if (!prediction || !stakeCents || stakeCents <= 0) {
-        return res.status(400).json({ error: "Invalid parameters received." });
-    }
-
     if (userWallet.balanceCents < stakeCents) {
-        return res.status(400).json({ error: "Insufficient wallet funds!" });
+        return res.status(400).json({ error: "Insufficient wallet balance!" });
     }
-
     userWallet.balanceCents -= stakeCents;
     const formattedBal = (userWallet.balanceCents / 100).toFixed(2);
-
-    const newBet = { betId: betSlipArchive.length + 1, prediction, stakePaidCents: stakeCents, timestamp: new Date() };
-    betSlipArchive.push(newBet);
-
-    res.json({ message: "Bet successfully accepted by server!", walletRemaining: `$${formattedBal}` });
+    res.json({ message: "Bet authorized successfully!", walletRemaining: `$${formattedBal}` });
 });
 
-// 4. REAL PAYMENT WEBHOOK
-app.post('/api/v1/payments/webhook', (req, res) => {
-    const paystackSignature = req.headers['x-paystack-signature'];
-    const MySecretKey = "sk_live_123456789"; 
-
-    const hash = crypto.createHmac('sha512', MySecretKey)
-                       .update(JSON.stringify(req.body))
-                       .digest('hex');
-
-    if (hash !== paystackSignature) {
-        return res.status(401).send("Unauthorized Webhook Source");
-    }
-
-    const eventData = req.body;
-    if (eventData.event === 'charge.success') {
-        const depositedAmount = eventData.data.amount; 
-        console.log(`💰 Real Payment Confirmed: ${depositedAmount} cents`);
-        userWallet.balanceCents += depositedAmount;
-    }
-
-    res.status(200).send('Webhook processed');
-});
-
-// 5. DYNAMIC INTERNET PORT SETTING
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Betting backend live on port ${PORT}`));
+app.listen(PORT, () => console.log(`Betting Infrastructure Live on port ${PORT}`));
