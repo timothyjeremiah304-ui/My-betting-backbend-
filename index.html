@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WackoBet Mobile</title>
+    <style>
+        /* SportyBet Inspired Premium Theme */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff;
+        }
+        /* Top Navigation Header */
+        .header {
+            background-color: #1a1a1a;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #e41e26;
+        }
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #e41e26;
+            letter-spacing: 1px;
+        }
+        .logo span { color: #ffb703; }
+        .wallet-box {
+            background-color: #262626;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid #ffb703;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        /* Live Sports Match Cards */
+        .main-container { padding: 15px; }
+        .section-title {
+            font-size: 16px;
+            color: #aaaaaa;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .match-card {
+            background: linear-gradient(135deg, #1e1e1e 0%, #262626 100%);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+        .teams {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .vs { color: #e41e26; margin: 0 10px; }
+        /* Clickable Odds Betting Grid */
+        .odds-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .odds-btn {
+            background-color: #333333;
+            border: 1px solid #444444;
+            color: white;
+            padding: 12px 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .odds-btn:hover, .odds-btn.active {
+            background-color: #e41e26;
+            border-color: #e41e26;
+            font-weight: bold;
+        }
+        .odds-label { font-size: 11px; color: #aaa; block; margin-bottom: 4px;}
+        .odds-value { font-size: 15px; font-weight: bold; color: #ffb703; }
+        .odds-btn:hover .odds-value, .odds-btn.active .odds-value { color: white; }
+        /* Bet Slip Drawer Area */
+        .betslip-box {
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            padding: 15px;
+            border-top: 2px solid #ffb703;
+            margin-top: 20px;
+        }
+        .slip-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        .stake-input {
+            width: 100px;
+            background-color: #2b2b2b;
+            border: 1px solid #444444;
+            color: white;
+            padding: 6px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .place-btn {
+            background-color: #00b4d8;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .place-btn:hover { background-color: #0077b6; }
+        .status-msg {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #ffb703;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo">WACKO<span>BET</span></div>
+        <div class="wallet-box" id="wallet-display">Bal: $500.00</div>
+    </div>
+
+    <div class="main-container">
+        <div class="section-title">English Premier League</div>
+        
+        <div class="match-card">
+            <div class="teams">Arsenal <span class="vs">VS</span> Chelsea</div>
+            <div class="odds-grid">
+                <div class="odds-btn" onclick="selectPrediction('Home', 2.10, this)">
+                    <div class="odds-label">Home (1)</div>
+                    <div class="odds-value">2.10</div>
+                </div>
+                <div class="odds-btn" onclick="selectPrediction('Draw', 3.40, this)">
+                    <div class="odds-label">Draw (X)</div>
+                    <div class="odds-value">3.40</div>
+                </div>
+                <div class="odds-btn" onclick="selectPrediction('Away', 2.90, this)">
+                    <div class="odds-label">Away (2)</div>
+                    <div class="odds-value">2.90</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="betslip-box">
+            <div style="font-weight: bold; margin-bottom: 10px; color: #ffb703;">Receipt / Betslip</div>
+            <div class="slip-row">
+                <span>Selection:</span>
+                <span id="slip-selection" style="font-weight: bold; color: #00b4d8;">None Chosen</span>
+            </div>
+            <div class="slip-row">
+                <span>Stake Amount ($):</span>
+                <input type="number" class="stake-input" id="stake-amount" value="10" oninput="calculatePayout()">
+            </div>
+            <div class="slip-row" style="border-top: 1px solid #333; padding-top: 10px;">
+                <span>Potential Est. Payout:</span>
+                <span id="slip-payout" style="font-weight: bold; color: #2a9d8f;">$0.00</span>
+            </div>
+            <button class="place-btn" onclick="submitBetToBackend()">Submit Bet Slip</button>
+            <div class="status-msg" id="server-response"></div>
+        </div>
+    </div>
+
+    <script>
+        // PASTE YOUR ACTUAL RENDER LINK INSIDE THE QUOTES BELOW
+        const BACKEND_URL = "https://wacko-betting-app.onrender.com";
+
+        let selectedPrediction = "";
+        let selectedOdds = 0.0;
+
+        // Visual Selection Highlight
+        function selectPrediction(type, odds, element) {
+            const buttons = document.querySelectorAll('.odds-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            
+            selectedPrediction = type;
+            selectedOdds = odds;
+            document.getElementById('slip-selection').innerText = `${type} @ ${odds}`;
+            calculatePayout();
+        }
+
+        function calculatePayout() {
+            const stake = document.getElementById('stake-amount').value;
+            const potential = stake * selectedOdds;
+            document.getElementById('slip-payout').innerText = selectedOdds ? `$${potential.toFixed(2)}` : "$0.00";
+        }
+
+        // Send data out of phone straight to Render cloud database
+        async function submitBetToBackend() {
+            const stakeValue = document.getElementById('stake-amount').value;
+            const statusBox = document.getElementById('server-response');
+
+            if(!selectedPrediction) {
+                statusBox.innerText = "Error: Please click an odds button first!";
+                return;
+            }
+
+            statusBox.style.color = "#ffb703";
+            statusBox.innerText = "Processing bet slip with Render engine...";
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/place-bet`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prediction: selectedPrediction,
+                        stakeCents: stakeValue * 100 // Convert dollars to pennies
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    statusBox.style.color = "#2a9d8f";
+                    statusBox.innerText = `🎰 Approved! ${data.message}`;
+                    document.getElementById('wallet-display').innerText = `Bal: ${data.walletRemaining}`;
+                } else {
+                    statusBox.style.color = "#e41e26";
+                    statusBox.innerText = `Declined: ${data.error}`;
+                }
+            } catch (err) {
+                statusBox.style.color = "#e41e26";
+                statusBox.innerText = "Connection Error: Backend server is offline.";
+            }
+        }
+    </script>
+</body>
+</html>
