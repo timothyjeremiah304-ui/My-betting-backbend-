@@ -3,245 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1xWacko - Premium Bookmaker</title>
+    <title>1xBet Premium Workspace</title>
     <style>
-        body { margin: 0; padding: 0; background-color: #090f1e; font-family: sans-serif; color: #e2e8f0; padding-bottom: 80px; }
-        .navbar { background-color: #121c32; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #3b82f6; position: sticky; top: 0; z-index: 100; }
-        .brand { font-size: 20px; font-weight: 800; color: #3b82f6; text-decoration: none; }
-        .brand span { color: #f59e0b; }
-        .balance-badge { background: #1e293b; padding: 6px 12px; border-radius: 20px; border: 1px solid #f59e0b; color: #f59e0b; font-weight: bold; font-size: 13px; }
+        body { margin: 0; padding: 0; background-color: #060a13; font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: #e2e8f0; padding-bottom: 90px; -webkit-user-select: none; }
+        .header-bar { background-color: #0c1424; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1e40af; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
+        .logo { font-size: 22px; font-weight: 900; color: #1d4ed8; text-decoration: none; letter-spacing: -0.5px; }
+        .logo span { color: #f59e0b; }
+        .wallet-display { background: #13223f; padding: 6px 14px; border-radius: 20px; border: 1px solid #f59e0b; color: #f59e0b; font-weight: bold; font-size: 13px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
         
-        .container { padding: 12px; }
-        .view-header { background: #121c32; padding: 10px; border-radius: 6px; font-size: 12px; font-weight: bold; color: #3b82f6; display: flex; justify-content: space-between; margin-bottom: 12px; }
-        
-        /* 1xBet Multi-Selection Cards */
-        .card { background: #121c32; border-radius: 8px; padding: 12px; margin-bottom: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
-        .card-meta { display: flex; justify-content: space-between; font-size: 11px; color: #64748b; margin-bottom: 6px; }
-        .match-title-row { display: flex; justify-content: space-between; font-weight: bold; font-size: 15px; margin-bottom: 12px; }
-        
-        .market-segment { border-top: 1px solid #1e293b; padding-top: 8px; margin-top: 6px; }
-        .market-label { font-size: 11px; color: #94a3b8; margin-bottom: 4px; font-weight: bold; text-transform: uppercase; }
-        .odds-row { display: flex; gap: 6px; }
-        .btn-odds { background: #1e293b; border: 1px solid #334155; color: #fff; flex: 1; padding: 8px 4px; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-odds:active { background: #f59e0b; color: #000; }
-        .btn-odds span { color: #f59e0b; font-weight: bold; }
-        .btn-odds:active span { color: #000; }
+        .sports-scroller { display: flex; gap: 8px; padding: 12px; background: #0c1424; overflow-x: auto; border-bottom: 1px solid #14223c; position: sticky; top: 54px; z-index: 90; }
+        .sports-scroller::-webkit-scrollbar { display: none; }
+        .tab-node { background: #13223f; border: 1px solid #1e293b; padding: 8px 18px; border-radius: 20px; color: #94a3b8; font-weight: bold; font-size: 12px; cursor: pointer; white-space: nowrap; transition: 0.2s ease; }
+        .tab-node.active { background: #1d4ed8; color: #fff; border-color: #3b82f6; }
 
-        /* Persistent Slip Box */
-        .slip-overlay { display: none; position: fixed; bottom: 60px; left: 0; right: 0; background: #121c32; border-top: 3px solid #f59e0b; padding: 16px; box-shadow: 0 -6px 20px rgba(0,0,0,0.7); z-index: 99; }
-        .slip-top { display: flex; justify-content: space-between; font-weight: bold; color: #f59e0b; margin-bottom: 10px; }
-        .slip-body { background: #090f1e; padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 12px; }
-        .input-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
-        .input-field { width: 80px; background: #1e293b; border: 1px solid #f59e0b; color: #fff; padding: 6px; border-radius: 4px; text-align: center; font-weight: bold; }
-        .btn-submit { background: #10b981; color: white; border: none; width: 100%; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 14px; text-transform: uppercase; margin-top: 10px; }
-
-        /* History Cards */
-        .history-card { background: #121c32; border-radius: 6px; padding: 12px; margin-bottom: 10px; border-left: 4px solid #3b82f6; }
+        .viewport-container { padding: 12px; }
+        .status-header { font-size: 10px; font-weight: bold; color: #475569; margin-bottom: 12px; display: flex; justify-content: space-between; letter-spacing: 1px; }
         
-        .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #121c32; border-top: 1px solid #1e293b; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
-        .nav-link { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 11px; cursor: pointer; text-decoration: none; width: 33%; }
-        .nav-link.active { color: #3b82f6; }
-        .nav-icon { font-size: 18px; margin-bottom: 2px; }
+        .match-card { background: #0c1424; border-radius: 8px; padding: 12px; margin-bottom: 12px; border: 1px solid #14223c; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .match-meta { display: flex; justify-content: space-between; font-size: 11px; color: #f59e0b; font-weight: bold; margin-bottom: 8px; }
+        .teams-row { display: flex; justify-content: space-between; font-weight: bold; font-size: 15px; margin-bottom: 12px; color: #ffffff; }
+        
+        .market-divider { border-top: 1px solid #13223f; padding-top: 8px; margin-top: 8px; }
+        .market-title { font-size: 10px; color: #64748b; margin-bottom: 6px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+        .odds-grid { display: flex; gap: 6px; }
+        .odds-btn { background: #13223f; border: 1px solid #1e293b; color: #fff; flex: 1; padding: 10px 6px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; justify-content: space-between; padding-left: 10px; padding-right: 10px; transition: 0.15s; }
+        .odds-btn span { color: #f59e0b; font-weight: bold; }
+        .odds-btn:active { background: #1d4ed8; border-color: #3b82f6; }
+        .odds-btn.active-selected { background: #f59e0b; color: #000; border-color: #f59e0b; }
+        .odds-btn.active-selected span { color: #000; }
+
+        .slip-panel-drawer { display: none; position: fixed; bottom: 60px; left: 0; right: 0; background: #0c1424; border-top: 3px solid #1d4ed8; padding: 16px; max-height: 380px; overflow-y: auto; z-index: 99; box-shadow: 0 -10px 30px rgba(0,0,0,0.8); }
+        .drawer-header { display: flex; justify-content: space-between; font-weight: bold; font-size: 13px; color: #3b82f6; border-bottom: 1px solid #13223f; padding-bottom: 8px; margin-bottom: 12px; }
+        .stacked-slip-row { background: #060a13; padding: 10px; border-radius: 6px; margin-bottom: 8px; font-size: 12px; position: relative; border-left: 3px solid #f59e0b; border: 1px solid #13223f; }
+        .kill-item-btn { position: absolute; right: 10px; top: 8px; color: #ef4444; font-weight: bold; cursor: pointer; font-size: 16px; }
+        
+        .calculation-card { background: #13223f; padding: 12px; border-radius: 6px; margin-top: 12px; font-size: 13px; }
+        .data-flex-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+        .stake-box-input { width: 80px; background: #060a13; border: 1px solid #1d4ed8; color: #fff; padding: 6px; border-radius: 4px; text-align: center; font-weight: bold; font-size: 13px; }
+        .submit-ticket-btn { background: #10b981; color: white; border: none; width: 100%; padding: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 14px; text-transform: uppercase; margin-top: 10px; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3); }
+
+        .receipt-history-card { background: #0c1424; border-radius: 8px; padding: 14px; margin-bottom: 12px; border: 1px solid #14223c; border-left: 4px solid #10b981; }
+        .receipt-inner-item { background: #060a13; padding: 8px; border-radius: 4px; margin-top: 6px; font-size: 12px; color: #94a3b8; border: 1px solid #13223f; }
+
+        .navigation-dock { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background-color: #0c1424; border-top: 1px solid #13223f; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+        .dock-tab { display: flex; flex-direction: column; align-items: center; color: #64748b; font-size: 11px; cursor: pointer; width: 33%; text-decoration: none; }
+        .dock-tab.active-tab { color: #3b82f6; }
+        .dock-icon { font-size: 18px; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
-    <div class="navbar">
-        <a class="brand" href="/">1X<span>BET CLONE</span></a>
-        <div id="wallet-view" class="balance-badge">Bal: $500.00</div>
+    <div class="header-bar">
+        <a class="logo" href="/">1X<span>BET ULTRA</span></a>
+        <div id="account-wallet-box" class="wallet-display">Bal: $500.00</div>
     </div>
 
-    <div class="container" id="view-port">
-        <div class="view-header">
-            <span>⚽ LIVE SPORTSBOOK RADAR</span>
-            <span style="color:#10b981;">● FEED ONLINE</span>
-        </div>
-        <div id="match-list-container">Streaming 1xBet system configurations...</div>
+    <div class="sports-scroller" id="sports-filter-scroller">
+        <div class="tab-node active" onclick="executeCategoryFilter('all', this)">🔥 All Live Lines</div>
+        <div class="tab-node" onclick="executeCategoryFilter('football', this)">⚽ Football</div>
+        <div class="tab-node" onclick="executeCategoryFilter('basketball', this)">🏀 Basketball</div>
+        <div class="tab-node" onclick="executeCategoryFilter('hockey', this)">🏒 Hockey</div>
+        <div class="tab-node" onclick="executeCategoryFilter('table_tennis', this)">🏓 Table Tennis</div>
     </div>
 
-    <!-- Live Bet Slip Interface Drawer -->
-    <div id="slip-drawer" class="slip-overlay">
-        <div class="slip-top">
-            <span>🎟️ PLACE LIVE SELECTION</span>
-            <span style="color:#64748b; cursor:pointer;" onclick="closeDrawer()">[HIDE X]</span>
+    <div class="viewport-container" id="master-view-target">
+        <div class="status-header">
+            <span>📡 ACTIVE SPORTSBOOK DATA FEED</span>
+            <span style="color:#10b981;">● RUNNING LIVE</span>
         </div>
-        <div class="slip-body">
-            <div id="slip-match-title" style="font-weight:bold; color:#fff; margin-bottom:6px;"></div>
-            <div style="color:#94a3b8; font-size:12px;">
-                Market: <span id="slip-market-name" style="color:#3b82f6;"></span><br>
-                Selection: <span id="slip-your-pick" style="color:#10b981; font-weight:bold;"></span>
+        <div id="sportsbook-lines-wrapper">Aggregating real-time global server streams...</div>
+    </div>
+
+    <div id="master-slip-drawer" class="slip-panel-drawer">
+        <div class="drawer-header">
+            <span id="receipt-type-title">🎟️ MULTI-RECEIPT ACTIVE SLIP</span>
+            <span style="color:#64748b; cursor:pointer;" onclick="displayDrawerPanel(false)">[MINIMIZE X]</span>
+        </div>
+        <div id="slip-items-container-stack"></div>
+        
+        <div class="calculation-card">
+            <div class="data-flex-row">
+                <span>Total Combined Odds:</span>
+                <span id="slip-odds-accumulator-box" style="color:#f59e0b; font-weight:bold;">1.00</span>
             </div>
+            <div class="data-flex-row" style="align-items: center; margin-top:4px;">
+                <span>Stake Value ($):</span>
+                <input type="number" id="slip-stake-input-field" class="stake-box-input" value="20" oninput="calculateSlipPayoutEstimations()">
+            </div>
+            <div class="data-flex-row" style="margin-top:8px; border-top:1px solid #1e293b; padding-top:8px;">
+                <span style="font-weight:bold;">Potential Return Payout:</span>
+                <span id="slip-payout-projection-box" style="color:#10b981; font-weight:bold;">$0.00</span>
+            </div>
+            <button class="submit-ticket-btn" onclick="commitSlipToProductionLedger()">Confirm Operational Ticket</button>
         </div>
-        <div class="input-row">
-            <span>Stake Amount ($):</span>
-            <input type="number" id="stake-amount-box" class="input-field" value="20">
-        </div>
-        <button class="btn-submit" onclick="executeBetTransaction()">Confirm Live Ticket</button>
     </div>
 
-    <div class="bottom-bar">
-        <div class="nav-link active" onclick="navigate('sports', this)"><span class="nav-icon">🏠</span><span>Sports</span></div>
-        <div class="nav-link" onclick="navigate('live', this)"><span class="nav-icon">🔥</span><span>Live Live</span></div>
-        <div class="nav-link" onclick="navigate('history', this)"><span class="nav-icon">📋</span><span>My Bets</span></div>
+    <div class="navigation-dock">
+        <div class="dock-tab active-tab" onclick="changeAppSectionView('sports', this)"><span class="dock-icon">🏟️</span><span>Sportsbook</span></div>
+        <div class="dock-tab" onclick="displayDrawerPanel(true)"><span class="dock-icon">📥</span><span>Bet Slip (<b id="dock-counter-pill">0</b>)</span></div>
+        <div class="dock-tab" onclick="changeAppSectionView('history', this)"><span class="dock-icon">📜</span><span>My Slips</span></div>
     </div>
 
     <script>
-        let selectedBet = null;
-        // Initialize wallet or load existing custom values
-        let walletBalance = parseFloat(localStorage.getItem('walletBalance') || '500.00');
+        let backendDataBuffer = [];
+        let chosenSportCategory = 'all';
+        let internalActiveSlipArray = [];
+        let runtimeUserBalance = parseFloat(localStorage.getItem('walletBalance') || '500.00');
 
-        function updateWalletDisplay() {
-            document.getElementById('wallet-view').innerText = `Bal: $${walletBalance.toFixed(2)}`;
-            localStorage.setItem('walletBalance', walletBalance.toString());
+        function synchronizeWalletInterface() {
+            document.getElementById('account-wallet-box').innerText = `Bal: $${runtimeUserBalance.toFixed(2)}`;
+            localStorage.setItem('walletBalance', runtimeUserBalance.toString());
         }
 
-        async function streamLiveFixtures() {
-            const listContainer = document.getElementById('match-list-container');
-            if(!listContainer) return;
-
+        async function pullServerBroadcastData() {
             try {
-                const res = await fetch('/api/live-fixtures');
-                const games = await res.json();
-                let layoutHtml = "";
-
-                games.forEach(g => {
-                    layoutHtml += `
-                    <div class="card">
-                        <div class="card-meta">
-                            <span style="color:#f59e0b; font-weight:bold;">${g.league}</span>
-                            <span style="color:#10b981; font-weight:bold;">⏱️ LIVE ${g.time}'</span>
-                        </div>
-                        <div class="match-title-row">
-                            <span>${g.team1} vs ${g.team2}</span>
-                            <span style="color:#f59e0b;">${g.score1}:${g.score2}</span>
-                        </div>
-                        
-                        <!-- Market Move Option 1: Full Time Result -->
-                        <div class="market-segment">
-                            <div class="market-label">Full Time Result (1X2)</div>
-                            <div class="odds-row">
-                                <button class="btn-odds" onclick="openDrawer('${g.id}','${g.team1}','${g.team2}','1X2','Home Win (1)',${g.markets.matchResult[0]})">1 <span>${g.markets.matchResult[0].toFixed(2)}</span></button>
-                                <button class="btn-odds" onclick="openDrawer('${g.id}','${g.team1}','${g.team2}','1X2','Draw (X)',${g.markets.matchResult[1]})">X <span>${g.markets.matchResult[1].toFixed(2)}</span></button>
-                                <button class="btn-odds" onclick="openDrawer('${g.id}','${g.team1}','${g.team2}','1X2','Away Win (2)',${g.markets.matchResult[2]})">2 <span>${g.markets.matchResult[2].toFixed(2)}</span></button>
-                            </div>
-                        </div>
-
-                        <!-- Market Move Option 2: Double Chance -->
-                        <div class="market-segment">
-                            <div class="market-label">Double Chance</div>
-                            <div class="odds-row">
-                                <button class="btn-odds" onclick="openDrawer('${g.id}','${g.team1}','${g.team2}','Double Chance','1X',${g.markets.doubleChance[0]})">1X <span>${g.markets.doubleChance[0].toFixed(2)}</span></button>
-                                <button class="btn-odds" onclick="openDrawer('${g.id}','${g.team1}','${g.team2}','Double Chance','12',${g.markets.doubleChance[1]})">12 <span>${g.markets.doubleChance[1].toFixed(2)}</span></button>
-                                <button class="btn-odds" onclick="openDrawer('${g.id}','${g.team1}','${g.team2}','Double Chance','2X',${g.markets.doubleChance[2]})">2X <span>${g.markets.doubleChance[2].toFixed(2)}</span></button>
-                            </div>
-                        </div>
-                    </div>`;
-                });
-                listContainer.innerHTML = layoutHtml;
-            } catch(e){}
+                const feedback = await fetch('/api/live-fixtures');
+                backendDataBuffer = await feedback.json();
+                renderLiveSportsbookGrid();
+            } catch(err){}
         }
 
-        function openDrawer(id, t1, t2, market, pick, odds) {
-            selectedBet = { id, t1, t2, market, pick, odds };
-            document.getElementById('slip-match-title').innerText = `${t1} vs ${t2}`;
-            document.getElementById('slip-market-name').innerText = market;
-            document.getElementById('slip-your-pick').innerText = `${pick} @ ${odds.toFixed(2)}`;
-            document.getElementById('slip-drawer').style.display = "block";
-        }
+        function renderLiveSportsbookGrid() {
+            const viewportNode = document.getElementById('sportsbook-lines-wrapper');
+            if(!viewportNode) return;
 
-        function closeDrawer() {
-            document.getElementById('slip-drawer').style.display = "none";
-        }
-
-        function executeBetTransaction() {
-            if(!selectedBet) return;
-            const stakeValue = parseFloat(document.getElementById('stake-amount-box').value);
-
-            if(isNaN(stakeValue) || stakeValue <= 0) {
-                alert("Please enter a valid stake amount.");
-                return;
-            }
-            if(walletBalance < stakeValue) {
-                alert("Insufficient funds for this stake move!");
-                return;
+            let filteredPool = backendDataBuffer;
+            if(chosenSportCategory !== 'all') {
+                filteredPool = backendDataBuffer.filter(game => game.sport === chosenSportCategory);
             }
 
-            // Deduct locally immediately
-            walletBalance -= stakeValue;
-            updateWalletDisplay();
+            let htmlBuffer = "";
+            filteredPool.forEach(match => {
+                htmlBuffer += `
+                <div class="match-card">
+                    <div class="match-meta">
+                        <span>${match.league}</span>
+                        <span style="color:#10b981;">⏱️ LIVE ${match.time}'</span>
+                    </div>
+                    <div class="teams-row">
+                        <span>${match.team1} vs ${match.team2}</span>
+                        <span style="color:#f59e0b;">${match.score1}:${match.score2}</span>
+                    </div>
+                    
+                    <div class="market-divider">
+                        <div class="market-title">Full Time Result (1X2)</div>
+                        <div class="odds-grid">
+                            <button class="odds-btn" onclick="registerSelection('${match.id}','${match.team1} vs ${match.team2}','1X2','Home Win (1)',${match.markets.matchResult[0]})">1 <span>${match.markets.matchResult[0].toFixed(2)}</span></button>
+                            <button class="odds-btn" onclick="registerSelection('${match.id}','${match.team1} vs ${match.team2}','1X2','Draw Match (X)',${match.markets.matchResult[1]})">X <span>${match.markets.matchResult[1].toFixed(2)}</span></button>
+                            <button class="odds-btn" onclick="registerSelection('${match.id}','${match.team1} vs ${match.team2}','1X2','Away Win (2)',${match.markets.matchResult[2]})">2 <span>${match.markets.matchResult[2].toFixed(2)}</span></button>
+                        </div>
+                    </div>
 
-            // Structure 1xBet permanent slip asset
-            const ticket = {
-                id: "1X-" + Math.floor(100000 + Math.random() * 900000),
-                teams: `${selectedBet.t1} vs ${selectedBet.t2}`,
-                market: selectedBet.market,
-                pick: selectedBet.pick,
-                odds: selectedBet.odds.toFixed(2),
-                stake: stakeValue.toFixed(2),
-                returns: (stakeValue * selectedBet.odds).toFixed(2),
-                date: new Date().toLocaleTimeString(),
-                status: "UNSETTLED (LIVE)"
+                    <div class="market-divider">
+                        <div class="market-title">Double Chance</div>
+                        <div class="odds-grid">
+                            <button class="odds-btn" onclick="registerSelection('${match.id}','${match.team1} vs ${match.team2}','Double Chance','1X (Home/Draw)',${match.markets.doubleChance[0]})">1X <span>${match.markets.doubleChance[0].toFixed(2)}</span></button>
+                            <button class="odds-btn" onclick="registerSelection('${match.id}','${match.team1} vs ${match.team2}','Double Chance','12 (Home/Away)',${match.markets.doubleChance[1]})">12 <span>${match.markets.doubleChance[1].toFixed(2)}</span></button>
+                            <button class="odds-btn" onclick="registerSelection('${match.id}','${match.team1} vs ${match.team2}','Double Chance','2X (Away/Draw)',${match.markets.doubleChance[2]})">2X <span>${match.markets.doubleChance[2].toFixed(2)}</span></button>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            viewportNode.innerHTML = htmlBuffer;
+        }
+
+        function executeCategoryFilter(category, selectedTabElement) {
+            document.querySelectorAll('.tab-node').forEach(tab => tab.classList.remove('active'));
+            selectedTabElement.classList.add('active');
+            chosenSportCategory = category;
+            renderLiveSportsbookGrid();
+        }
+
+        // SLIP TRANSITION ARRAY SCHEDULER
+        function registerSelection(matchId, matchTitle, marketName, selectionPick, oddsValue) {
+            const existingItemIndex = internalActiveSlipArray.findIndex(element => element.matchId === matchId);
+            
+            if(existingItemIndex > -1) {
+                internalActiveSlipArray[existingItemIndex] = { matchId, matchTitle, marketName, selectionPick, oddsValue };
+            } else {
+                internalActiveSlipArray.push({ matchId, matchTitle, marketName, selectionPick, oddsValue });
+            }
+
+            document.getElementById('dock-counter-pill').innerText = internalActiveSlipArray.length;
+            calculateSlipPayoutEstimations();
+            displayDrawerPanel(true);
+        }
+
+        function ejectSelectionFromSlip(matchId) {
+            internalActiveSlipArray = internalActiveSlipArray.filter(element => element.matchId !== matchId);
+            document.getElementById('dock-counter-pill').innerText = internalActiveSlipArray.length;
+            calculateSlipPayoutEstimations();
+            if(internalActiveSlipArray.length === 0) displayDrawerPanel(false);
+            else renderSlipItemsStack();
+        }
+
+        function displayDrawerPanel(openState) {
+            document.getElementById('master-slip-drawer').style.display = openState ? "block" : "none";
+            if(openState) renderSlipItemsStack();
+        }
+
+        function renderSlipItemsStack() {
+            const targetContainer = document.getElementById('slip-items-container-stack');
+            let builtHtml = "";
+            internalActiveSlipArray.forEach(item => {
+                builtHtml += `
+                <div class="stacked-slip-row">
+                    <span class="kill-item-btn" onclick="ejectSelectionFromSlip('${item.matchId}')">×</span>
+                    <div style="font-weight:bold; color:#fff;">${item.matchTitle}</div>
+                    <div style="color:#64748b; font-size:11px; margin-top:3px;">
+                        Line: ${item.marketName} — Choice: <b style="color:#3b82f6;">${item.selectionPick}</b> @ <b style="color:#f59e0b;">${item.oddsValue.toFixed(2)}</b>
+                    </div>
+                </div>`;
+            });
+            targetContainer.innerHTML = builtHtml;
+            document.getElementById('receipt-type-title').innerText = internalActiveSlipArray.length > 1 ? "🎟️ ACCUMULATOR MULTI-RECEIPT" : "🎟️ SINGLE TRANS-SLIP";
+        }
+
+        function calculateSlipPayoutEstimations() {
+            if(internalActiveSlipArray.length === 0) {
+                document.getElementById('slip-odds-accumulator-box').innerText = "1.00";
+                document.getElementById('slip-payout-projection-box').innerText = "$0.00";
+                return;
+            }
+
+            // CORE COMPLEMENTARY ODDS MULTIPLICATION
+            let aggregatedOddsMultiplier = 1.0;
+            internalActiveSlipArray.forEach(item => {
+                aggregatedOddsMultiplier *= item.oddsValue;
+            });
+
+            const currentStakeAmount = parseFloat(document.getElementById('slip-stake-input-field').value || '0');
+            const mathematicalPayoutProjection = aggregatedOddsMultiplier * currentStakeAmount;
+
+            document.getElementById('slip-odds-accumulator-box').innerText = aggregatedOddsMultiplier.toFixed(2);
+            document.getElementById('slip-payout-projection-box').innerText = `$${mathematicalPayoutProjection.toFixed(2)}`;
+        }
+
+        function commitSlipToProductionLedger() {
+            if(internalActiveSlipArray.length === 0) return;
+            const finalizedStake = parseFloat(document.getElementById('slip-stake-input-field').value);
+
+            if(isNaN(finalizedStake) || finalizedStake <= 0) {
+                alert("Please declare a verified, structured betting stake.");
+                return;
+            }
+            if(runtimeUserBalance < finalizedStake) {
+                alert("Transaction Rejected: Insufficient liquidity ledger.");
+                return;
+            }
+
+            runtimeUserBalance -= finalizedStake;
+            synchronizeWalletInterface();
+
+            let finalOddsProduct = 1.0;
+            internalActiveSlipArray.forEach(item => finalOddsProduct *= item.oddsValue);
+
+            const productionReceiptNode = {
+                receiptId: "1X-TKT-" + Math.floor(100000 + Math.random() * 900000),
+                layoutType: internalActiveSlipArray.length > 1 ? `Accumulator (${internalActiveSlipArray.length} Events)` : "Single Core Line",
+                試合データ: [...internalActiveSlipArray],
+                oddsAccumulation: finalOddsProduct.toFixed(2),
+                stakedCapital: finalizedStake.toFixed(2),
+                projectedReturn: (finalizedStake * finalOddsProduct).toFixed(2),
+                timestamp: new Date().toLocaleTimeString(),
+                ticketStatus: "IN-PLAY LIVE"
             };
 
-            // Grab existing local storage ledger, push ticket inside, resave
-            let currentHistory = JSON.parse(localStorage.getItem('bet_history') || '[]');
-            currentHistory.unshift(ticket);
-            localStorage.setItem('bet_history', JSON.stringify(currentHistory));
+            let historicalReceiptLedger = JSON.parse(localStorage.getItem('master_receipt_ledger') || '[]');
+            historicalReceiptLedger.unshift(productionReceiptNode);
+            localStorage.setItem('master_receipt_ledger', JSON.stringify(historicalReceiptLedger));
 
-            alert(`Ticket accepted! Bet ID: ${ticket.id}`);
-            closeDrawer();
+            alert(`Ticket processed seamlessly! Receipt Code: ${productionReceiptNode.receiptId}`);
+            internalActiveSlipArray = [];
+            document.getElementById('dock-counter-pill').innerText = "0";
+            displayDrawerPanel(false);
         }
 
-        function displayHistoryView() {
-            const container = document.getElementById('view-port');
-            let historyData = JSON.parse(localStorage.getItem('bet_history') || '[]');
+        function buildHistoricalReceiptsView() {
+            const displayFrame = document.getElementById('master-view-target');
+            let historicalReceiptLedger = JSON.parse(localStorage.getItem('master_receipt_ledger') || '[]');
 
-            let codeBlock = `<div class="view-header"><span>📋 PERMANENT ACCOUNT BET SLIPS (${historyData.length})</span></div>`;
+            let codeMarkup = `<div class="status-header"><span>📜 PERMANENT ACCOUNT SYSTEM TICKETS (${historicalReceiptLedger.length})</span></div>`;
             
-            if(historyData.length === 0) {
-                codeBlock += `<div class="card" style="text-align:center; color:#64748b; padding:40px 10px;">Your ticket panel is completely empty. Place a selection row option to review assets here.</div>`;
+            if(historicalReceiptLedger.length === 0) {
+                codeMarkup += `<div class="match-card" style="text-align:center; padding:50px 20px; color:#475569;">No registered receipts found on browser node storage.</div>`;
             } else {
-                historyData.forEach(t => {
-                    codeBlock += `
-                    <div class="history-card">
-                        <div style="display:flex; justify-content:between; font-size:11px; color:#64748b; margin-bottom:4px;">
-                            <span>ID: <b>${t.id}</b></span>
-                            <span style="color:#f59e0b; margin-left:auto; font-weight:bold;">${t.status}</span>
+                historicalReceiptLedger.forEach(ticket => {
+                    let entriesMarkup = "";
+                    ticket.試合データ.forEach(subLine => {
+                        entriesMarkup += `
+                        <div class="receipt-inner-item">
+                            <b>${subLine.matchTitle}</b><br>
+                            ${subLine.marketName} — Choice: <span style="color:#3b82f6;">${subLine.selectionPick}</span> @ <b>${subLine.oddsValue.toFixed(2)}</b>
+                        </div>`;
+                    });
+
+                    codeMarkup += `
+                    <div class="receipt-history-card">
+                        <div style="display:flex; justify-content:space-between; font-size:11px; color:#64748b; margin-bottom:4px;">
+                            <span>ID: <b>${ticket.receiptId}</b> (${ticket.layoutType})</span>
+                            <span style="color:#f59e0b; font-weight:bold;">${ticket.ticketStatus}</span>
                         </div>
-                        <div style="font-weight:bold; font-size:14px; margin-bottom:6px;">${t.teams}</div>
-                        <div style="font-size:12px; color:#94a3b8; line-height:1.5;">
-                            Market: <span style="color:#3b82f6;">${t.market} (${t.pick})</span><br>
-                            Odds: <b>${t.odds}</b> | Stake: <span style="color:#10b981;">$${t.stake}</span><br>
-                            Potential Returns: <span style="color:#10b981; font-weight:bold;">$${t.returns}</span>
+                        <div>${entriesMarkup}</div>
+                        <div style="margin-top:10px; border-top:1px solid #13223f; padding-top:6px; font-size:12px; color:#94a3b8; line-height:1.5;">
+                            Combined Odds Factor: <b style="color:#f59e0b;">${ticket.oddsAccumulation}</b><br>
+                            Stake: <span style="color:#10b981;">$${ticket.stakedCapital}</span> | Est. Return: <b style="color:#10b981;">$${ticket.projectedReturn}</b>
                         </div>
                     </div>`;
                 });
             }
-            container.innerHTML = codeBlock;
+            displayFrame.innerHTML = codeMarkup;
         }
 
-        function navigate(target, element) {
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            element.classList.add('active');
+        function changeAppSectionView(viewTarget, dockTabElement) {
+            document.querySelectorAll('.dock-tab').forEach(tab => tab.classList.remove('active-tab'));
+            dockTabElement.classList.add('active-tab');
 
-            if(target === 'history') {
-                displayHistoryView();
+            if(viewTarget === 'history') {
+                document.getElementById('sports-filter-scroller').style.display = "none";
+                buildHistoricalReceiptsView();
             } else {
-                document.getElementById('view-port').innerHTML = `
-                    <div class="view-header"><span>⚽ LIVE SPORTSBOOK RADAR</span><span style="color:#10b981;">● FEED ONLINE</span></div>
-                    <div id="match-list-container">Streaming 1xBet system configurations...</div>`;
-                streamLiveFixtures();
+                document.getElementById('sports-filter-scroller').style.display = "flex";
+                document.getElementById('master-view-target').innerHTML = `
+                    <div class="status-header"><span>📡 ACTIVE SPORTSBOOK DATA FEED</span><span style="color:#10b981;">● RUNNING LIVE</span></div>
+                    <div id="sportsbook-lines-wrapper">Aggregating real-time global server streams...</div>`;
+                renderLiveSportsbookGrid();
             }
         }
 
-        // Run Loop Configurations
-        updateWalletDisplay();
-        streamLiveFixtures();
-        setInterval(() => {
-            if(document.getElementById('match-list-container')) {
-                streamLiveFixtures();
-            }
-        }, 6000);
+        // INITIALIZATION LOOP ENTRIES
+        synchronizeWalletInterface();
+        pullServerBroadcastData();
+        setInterval(pullServerBroadcastData, 6000); // Dynamic line updates every 6 seconds
     </script>
 </body>
 </html>
