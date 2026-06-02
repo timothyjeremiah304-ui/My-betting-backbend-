@@ -3,32 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WackoBet Live Engine</title>
+    <title>WackoBet Sportsbook</title>
     <style>
-        body { margin: 0; padding: 0; background-color: #121212; font-family: Arial, sans-serif; color: #fff; padding-bottom: 80px; -webkit-user-select: none; user-select: none; }
+        body { margin: 0; padding: 0; background-color: #121212; font-family: 'Segoe UI', Arial, sans-serif; color: #fff; padding-bottom: 80px; }
         .header { background-color: #1a1a1a; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #e41e26; position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 22px; font-weight: 900; color: #e41e26; }
+        .logo { font-size: 22px; font-weight: 900; color: #e41e26; text-decoration: none; }
         .logo span { color: #ffb703; }
-        .wallet-box { background-color: #262626; padding: 6px 12px; border-radius: 4px; border: 1px solid #ffb703; font-weight: bold; }
+        .wallet-box { background-color: #262626; padding: 6px 12px; border-radius: 4px; border: 1px solid #ffb703; font-weight: bold; color: #ffb703; }
         .main-container { padding: 12px; }
-        .section-title { font-size: 14px; color: #ffb703; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
-        .live-dot { width: 8px; height: 8px; background-color: #2a9d8f; border-radius: 50%; display: inline-block; animation: flash 1.5s infinite; }
-        @keyframes flash { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
-        .match-card { background-color: #1c1c1c; border-radius: 8px; padding: 12px; margin-bottom: 12px; border-left: 4px solid #2a9d8f; }
-        .match-meta { display: flex; justify-content: space-between; font-size: 11px; color: #888; margin-bottom: 6px; }
+        .section-title { font-size: 13px; color: #ffb703; font-weight: bold; margin: 15px 0 10px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .match-card { background-color: #1c1c1c; border-radius: 8px; padding: 14px; margin-bottom: 12px; border-left: 4px solid #e41e26; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .match-meta { display: flex; justify-content: space-between; font-size: 11px; color: #aaa; margin-bottom: 8px; }
         .league-tag { color: #ffb703; font-weight: bold; }
         .match-main { display: flex; justify-content: space-between; align-items: center; }
-        .teams-flex { display: flex; flex-direction: column; gap: 6px; font-weight: bold; width: 55%; }
-        .team-row { display: flex; justify-content: space-between; padding-right: 15px; }
-        .live-score { color: #ffb703; font-weight: 800; }
-        .odds-container { display: flex; gap: 6px; width: 45%; justify-content: flex-end; }
-        .odds-btn { background-color: #2b2b2b; border: 1px solid #3a3a3a; color: white; flex: 1; padding: 10px 2px; border-radius: 4px; font-weight: bold; text-align: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-        .odds-btn:active, .odds-btn.selected { background-color: #e41e26; border-color: #e41e26; }
-        .odds-val { display: block; color: #ffb703; font-size: 13px; }
+        .teams-flex { display: flex; flex-direction: column; gap: 8px; font-weight: bold; width: 52%; font-size: 15px; }
+        .team-row { display: flex; justify-content: space-between; }
+        .live-score { color: #ffb703; font-weight: 800; padding-right: 10px; }
+        .odds-container { display: flex; gap: 6px; width: 48%; justify-content: flex-end; }
+        .odds-btn { background-color: #2b2b2b; border: 1px solid #3a3a3a; color: white; flex: 1; padding: 12px 2px; border-radius: 6px; font-weight: bold; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .odds-btn:active { background-color: #ffb703; color: #000; }
+        .odds-val { display: block; color: #ffb703; font-size: 12px; margin-top: 2px; }
         
-        /* Bottom Navigation Bar Layout */
+        /* Modal Betslip Layer */
+        .betslip-modal { display: none; position: fixed; bottom: 60px; left: 0; right: 0; background-color: #1a1a1a; border-top: 3px solid #ffb703; padding: 15px; z-index: 99; box-shadow: 0 -5px 15px rgba(0,0,0,0.5); }
+        .slip-header { display: flex; justify-content: space-between; font-weight: bold; color: #ffb703; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .slip-row { margin: 8px 0; font-size: 14px; display: flex; justify-content: space-between; }
+        .stake-input { width: 80px; background: #2b2b2b; border: 1px solid #ffb703; color: #fff; padding: 5px; border-radius: 4px; text-align: center; font-weight: bold; }
+        .place-btn { background-color: #2a9d8f; color: white; border: none; width: 100%; padding: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px; font-size: 15px; }
+        .close-slip { color: #888; cursor: pointer; font-size: 12px; }
+
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background-color: #1a1a1a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #2d2d2d; z-index: 100; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #888; font-size: 11px; cursor: pointer; width: 20%; text-align: center; -webkit-tap-highlight-color: transparent; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #888; font-size: 11px; cursor: pointer; width: 25%; }
         .nav-item.active { color: #e41e26; }
         .nav-icon { font-size: 18px; margin-bottom: 2px; }
     </style>
@@ -36,38 +41,52 @@
 <body>
 
     <div class="header">
-        <div class="logo">WACKO<span>BET</span></div>
-        <div id="wallet-display" class="wallet-box">Bal: $500.00</div>
+        <a class="logo" href="/">WACKO<span>BET</span></a>
+        <div id="wallet-display" class="wallet-box">Bal: --</div>
     </div>
 
-    <div class="main-container">
-        <div class="section-title"><span class="live-dot"></span> LIVE IN-PLAY SPORTSBOOK STREAM</div>
-        <div id="live-matches-target">Connecting to running platform stream...</div>
+    <div class="main-container" id="main-content">
+        <div class="section-title">🔥 LIVE IN-PLAY MATCHES</div>
+        <div id="live-matches-target">Streaming running match configurations...</div>
+    </div>
+
+    <div id="betslip" class="betslip-modal">
+        <div class="slip-header">
+            <span>BETSLIP TICKET</span>
+            <span class="close-slip" onclick="closeSlip()">[CLOSE X]</span>
+        </div>
+        <div class="slip-row"><span id="slip-match" style="font-weight:bold;"></span></div>
+        <div class="slip-row"><span>Selection: <mark id="slip-pick" style="background:none; color:#ffb703; font-weight:bold;"></mark></span> <span id="slip-odds" style="color:#ffb703; font-weight:bold;"></span></div>
+        <div class="slip-row">
+            <span>Stake Amount ($):</span>
+            <input type="number" id="stake-amount" class="stake-input" value="10" min="1">
+        </div>
+        <button class="place-btn" onclick="submitBetTicket()">PLACE BET NOW</button>
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="handleNav(this, 'home')"><span class="nav-icon">🏠</span><span>Home</span></div>
-        <div class="nav-item" onclick="handleNav(this, 'live')"><span class="nav-icon">🔥</span><span>Live</span></div>
-        <div class="nav-item" onclick="handleNav(this, 'bets')"><span class="nav-icon">📋</span><span>My Bets</span></div>
-        <div class="nav-item" onclick="handleNav(this, 'profile')"><span class="nav-icon">👤</span><span>Profile</span></div>
+        <div class="nav-item active" onclick="navigate('home')"><span class="nav-icon">🏠</span><span>Home</span></div>
+        <div class="nav-item" onclick="navigate('live')"><span class="nav-icon">🔥</span><span>Live</span></div>
+        <div class="nav-item" onclick="navigate('bets')"><span class="nav-icon">📋</span><span>My Bets</span></div>
     </div>
 
     <script>
-        // High-frequency automated data synchronization engine
-        async function fetchRealLiveMatches() {
+        let currentSelection = null;
+
+        async function updateWallet() {
+            try {
+                const res = await fetch('/api/wallet');
+                const data = await res.json();
+                document.getElementById('wallet-display').innerText = `Bal: $${data.balance}`;
+            } catch(e){}
+        }
+
+        async function fetchLiveStreams() {
             try {
                 const response = await fetch('/api/live-fixtures');
-                let matches = await response.json();
-                
+                const matches = await response.json();
                 let container = document.getElementById('live-matches-target');
-                
-                // FALLBACK VIRTUAL STREAM: If global real-life matches are empty right now, generate running simulated fixtures instantly
-                if(!matches || matches.length === 0) {
-                    matches = [
-                        { id: 101, league: "PREMIER SIMULATOR", team1: "Manchester United", team2: "Chelsea", time: Math.floor(Math.random() * 40) + 45, score1: Math.floor(Math.random() * 3), score2: Math.floor(Math.random() * 2), odds: [1.85, 3.40, 4.20] },
-                        { id: 102, league: "LIGA LIVE IN-PLAY", team1: "Barcelona", team2: "Atletico Madrid", time: Math.floor(Math.random() * 80) + 5, score1: Math.floor(Math.random() * 2), score2: Math.floor(Math.random() * 2), odds: [2.15, 3.10, 3.10] }
-                    ];
-                }
+                if(!container) return;
 
                 let html = "";
                 matches.forEach(m => {
@@ -75,7 +94,7 @@
                     <div class="match-card">
                         <div class="match-meta">
                             <span class="league-tag">${m.league}</span>
-                            <span style="color:#2a9d8f; font-weight:bold;">● RUNNING ${m.time}'</span>
+                            <span style="color:#2a9d8f; font-weight:bold;">● LIVE ${m.time}'</span>
                         </div>
                         <div class="match-main">
                             <div class="teams-flex">
@@ -83,40 +102,69 @@
                                 <div class="team-row"><span>${m.team2}</span><span class="live-score">${m.score2}</span></div>
                             </div>
                             <div class="odds-container">
-                                <button class="odds-btn" onclick="toggleOddsSelection(this)">1<span class="odds-val">${m.odds[0].toFixed(2)}</span></button>
-                                <button class="odds-btn" onclick="toggleOddsSelection(this)">X<span class="odds-val">${m.odds[1].toFixed(2)}</span></button>
-                                <button class="odds-btn" onclick="toggleOddsSelection(this)">2<span class="odds-val">${m.odds[2].toFixed(2)}</span></button>
+                                <button class="odds-btn" onclick="openSlip(${m.id}, 'Home Win (1)', ${m.odds[0]}, '${m.team1}', '${m.team2}')">1<span class="odds-val">${m.odds[0].toFixed(2)}</span></button>
+                                <button class="odds-btn" onclick="openSlip(${m.id}, 'Draw (X)', ${m.odds[1]}, '${m.team1}', '${m.team2}')">X<span class="odds-val">${m.odds[1].toFixed(2)}</span></button>
+                                <button class="odds-btn" onclick="openSlip(${m.id}, 'Away Win (2)', ${m.odds[2]}, '${m.team1}', '${m.team2}')">2<span class="odds-val">${m.odds[2].toFixed(2)}</span></button>
                             </div>
                         </div>
                     </div>`;
                 });
                 container.innerHTML = html;
-            } catch (err) {
-                console.error("Data stream sync dropped:", err);
-            }
+            } catch (err) {}
         }
 
-        // Handle active button switching without triggering phone text selectors
-        function handleNav(element, pageName) {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            element.classList.add('active');
+        function openSlip(id, pick, odds, t1, t2) {
+            currentSelection = { id, pick, odds, t1, t2 };
+            document.getElementById('slip-match').innerText = `${t1} vs ${t2}`;
+            document.getElementById('slip-pick').innerText = pick;
+            document.getElementById('slip-odds').innerText = `@ ${odds.toFixed(2)}`;
+            document.getElementById('betslip').style.display = 'block';
+        }
+
+        function closeSlip() {
+            document.getElementById('betslip').style.display = 'none';
+        }
+
+        async function submitBetTicket() {
+            if(!currentSelection) return;
+            const stake = document.getElementById('stake-amount').value;
             
-            if(pageName === 'bets') {
-                document.getElementById('live-matches-target').innerHTML = "<div style='padding:40px; text-align:center; color:#888;'>📋 No active betslips settled yet. Clear ticket history empty.</div>";
-            } else if (pageName === 'profile') {
-                document.getElementById('live-matches-target').innerHTML = "<div style='padding:40px; text-align:center; color:#888;'>👤 Account ID: WackoUser-9402<br>Verification Level: 1 Premium</div>";
+            const response = await fetch('/api/place-bet', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    matchId: currentSelection.id,
+                    selection: currentSelection.pick,
+                    stake: stake,
+                    team1: currentSelection.t1,
+                    team2: currentSelection.t2,
+                    odds: currentSelection.odds
+                })
+            });
+
+            const data = await response.json();
+            if(data.success) {
+                alert(`${data.message}\nTicket placed on ${data.ticket.match}. Balance updated!`);
+                updateWallet();
+                closeSlip();
             } else {
-                fetchRealLiveMatches();
+                alert(data.error);
             }
         }
 
-        function toggleOddsSelection(btn) {
-            btn.classList.toggle('selected');
+        function navigate(tab) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if(tab === 'home' || tab === 'live') {
+                document.getElementById('main-content').innerHTML = `<div class="section-title">🔥 LIVE IN-PLAY MATCHES</div><div id="live-matches-target">Streaming...</div>`;
+                fetchLiveStreams();
+            } else if(tab === 'bets') {
+                document.getElementById('main-content').innerHTML = `<div class="section-title">📋 MY SETTLED BETSLIPS</div><div class="match-card">No active tickets found in database account ledger.</div>`;
+            }
         }
 
-        // Initialize and lock execution loop to 4 seconds for fluid screen updates
-        fetchRealLiveMatches();
-        setInterval(fetchRealLiveMatches, 4000);
+        updateWallet();
+        fetchLiveStreams();
+        setInterval(fetchLiveStreams, 5000);
     </script>
 </body>
 </html>
