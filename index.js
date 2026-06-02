@@ -8,9 +8,10 @@ let userWallet = { username: "Player1", balanceCents: 50000 }; // Starts with $5
 let liveGame = { gameId: 1, homeTeam: "Chelsea", awayTeam: "Arsenal", homeOdds: 2.10, status: "UPCOMING" };
 let betSlipArchive = [];
 
-// 1. HOME SCREEN GATEWAY CHECK
+// 1. HOME SCREEN GATEWAY CHECK (Serves your SportyBet Face!)
+const path = require('path');
 app.get('/', (req, res) => {
-    res.send('<h1>Betting Backend Status: ONLINE 🚀</h1><p>Your server is live on the internet and ready to process wagers and webhooks.</p>');
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // 2. CHECK WALLET BALANCE
